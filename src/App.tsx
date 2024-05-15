@@ -1,10 +1,11 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import logoImg from "./assets/5.3 logo.png";
 import bubbleImg from "./assets/5.1 bubble.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SetQestionQty from "./features/SetQestionQty";
-import { FetchQuizParams, QuizDifficulty, QuizType } from "./types/quiz-type";
+import { FetchQuizParams, QuizCategory, QuizDifficulty, QuizType } from "./types/quiz-type";
 import SetQestionCategory from "./features/SetQestionCategory";
+import { QuizAPI } from "./api/quiz-api";
 
 enum Step {
   SetQestionQty,
@@ -21,7 +22,14 @@ function App() {
     difficulty: QuizDifficulty.Mixed,
     type: QuizType.Multiple,
   });
-  console.log(quizParams);
+  const [categories, setCategories] = useState<QuizCategory[]>([]);
+  async function fetchingCategories() {
+    setCategories(await QuizAPI.fetchCategories());
+  }
+
+  useEffect(() => {
+    fetchingCategories();
+  }, []);
   const header = (
     <Flex justify="center">
       <Image h={24} src={logoImg} />
@@ -44,7 +52,7 @@ function App() {
           />
         );
       case Step.SetQestionCategory:
-        return <SetQestionCategory />;
+        return <SetQestionCategory categories={categories} />;
       case Step.SetQuestionDifficulty:
         return <></>;
       case Step.Play:
