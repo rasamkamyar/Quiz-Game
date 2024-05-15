@@ -3,9 +3,15 @@ import logoImg from "./assets/5.3 logo.png";
 import bubbleImg from "./assets/5.1 bubble.png";
 import { useEffect, useState } from "react";
 import SetQestionQty from "./features/SetQestionQty";
-import { FetchQuizParams, QuizCategory, QuizDifficulty, QuizType } from "./types/quiz-type";
+import {
+  FetchQuizParams,
+  QuizCategory,
+  QuizDifficulty,
+  QuizType,
+} from "./types/quiz-type";
 import SetQestionCategory from "./features/SetQestionCategory";
 import { QuizAPI } from "./api/quiz-api";
+import SetQuestionDifficulty from "./features/SetQuestionDifficulty";
 
 enum Step {
   SetQestionQty,
@@ -24,9 +30,11 @@ function App() {
   });
   const [categories, setCategories] = useState<QuizCategory[]>([]);
   async function fetchingCategories() {
-    setCategories(await QuizAPI.fetchCategories());
+    setCategories([
+      { id: -1, name: "Mixed" },
+      ...(await QuizAPI.fetchCategories()),
+    ]);
   }
-
   useEffect(() => {
     fetchingCategories();
   }, []);
@@ -52,9 +60,20 @@ function App() {
           />
         );
       case Step.SetQestionCategory:
-        return <SetQestionCategory categories={categories} />;
+        return (
+          <SetQestionCategory
+            categories={categories}
+            onClickNext={(category: string) => {
+              setQuizParams({
+                ...quizParams,
+                category: category === "-1" ? "" : category,
+              });
+              setStep(Step.SetQuestionDifficulty);
+            }}
+          />
+        );
       case Step.SetQuestionDifficulty:
-        return <></>;
+        return <SetQuestionDifficulty />;
       case Step.Play:
         return <></>;
       case Step.Score:

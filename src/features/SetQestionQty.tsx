@@ -24,7 +24,7 @@ function SetQestionQty(p: {
     let marks = [];
     for (let index = p.min; index <= p.max; index += p.step) {
       marks.push(
-        <SliderMark value={index} ml={-1} pt={4}>
+        <SliderMark key={index} value={index} ml={-1} pt={4}>
           {index}
         </SliderMark>
       );

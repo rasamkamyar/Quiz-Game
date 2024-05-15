@@ -10,7 +10,10 @@ import {
 } from "@chakra-ui/react";
 import { QuizCategory } from "../types/quiz-type";
 
-function SetQestionCategory(p: { categories: QuizCategory[] }) {
+function SetQestionCategory(p: {
+  categories: QuizCategory[];
+  onClickNext: (categoryId: string) => void;
+}) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
     p.categories[0].id.toString()
   );
@@ -26,7 +29,7 @@ function SetQestionCategory(p: { categories: QuizCategory[] }) {
       </Radio>
     );
   });
-  console.log(selectedCategoryId);
+
   return (
     <>
       <Flex direction={"column"} alignItems={"center"}>
@@ -45,6 +48,7 @@ function SetQestionCategory(p: { categories: QuizCategory[] }) {
         </SimpleGrid>
       </RadioGroup>
       <Button
+        onClick={() => p.onClickNext(selectedCategoryId)}
         position={"absolute"}
         right={"10%"}
         top={"80%"}
