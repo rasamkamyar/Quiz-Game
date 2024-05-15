@@ -3,7 +3,7 @@ import logoImg from "./assets/5.3 logo.png";
 import bubbleImg from "./assets/5.1 bubble.png";
 import { useState } from "react";
 import SetQestionQty from "./features/SetQestionQty";
-import { QuizDifficulty, QuizType, fetchQuizParams } from "./types/quiz-type";
+import { FetchQuizParams, QuizDifficulty, QuizType } from "./types/quiz-type";
 import SetQestionCategory from "./features/SetQestionCategory";
 
 enum Step {
@@ -15,7 +15,7 @@ enum Step {
 }
 function App() {
   const [step, setStep] = useState<Step>(Step.SetQestionQty);
-  const [quizParams, setQuizParams] = useState<fetchQuizParams>({
+  const [quizParams, setQuizParams] = useState<FetchQuizParams>({
     amount: 0,
     category: "",
     difficulty: QuizDifficulty.Mixed,

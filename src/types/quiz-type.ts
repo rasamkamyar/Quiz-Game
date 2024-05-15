@@ -1,8 +1,17 @@
-export interface fetchQuizParams {
+export interface FetchQuizParams {
   amount: number;
   category: string;
   difficulty: QuizDifficulty;
   type: QuizType;
+}
+
+export interface FetchQuizCategoriesRes {
+  trivia_categories: QuizCategory[];
+}
+
+export interface QuizCategory {
+  id: number;
+  name: string;
 }
 
 export enum QuizDifficulty {
