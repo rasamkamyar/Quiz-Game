@@ -1,6 +1,7 @@
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Center,
+  Button,
   Flex,
   Heading,
   Slider,
@@ -15,6 +16,7 @@ function SetQestionQty(p: {
   min: number;
   max: number;
   defaultValue: number;
+  onClickNext: (amount: number) => void;
 }) {
   const [sliderValue, setSliderValue] = useState(p.defaultValue);
 
@@ -54,6 +56,15 @@ function SetQestionQty(p: {
           </SliderTrack>
         </Slider>
       </Flex>
+      <Button
+        onClick={() => p.onClickNext(sliderValue)}
+        position={"absolute"}
+        right={"10%"}
+        top={"80%"}
+        rightIcon={<ArrowForwardIcon />}
+      >
+        Set Category
+      </Button>
     </Box>
   );
 }
