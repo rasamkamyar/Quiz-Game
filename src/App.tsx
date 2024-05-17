@@ -13,6 +13,7 @@ import SetQestionCategory from "./features/SetQestionCategory";
 import { QuizAPI } from "./api/quiz-api";
 import SetQuestionDifficulty from "./features/SetQuestionDifficulty";
 
+import Play from "./features/Play";
 enum Step {
   SetQestionQty,
   SetQestionCategory,
@@ -43,7 +44,7 @@ function App() {
       <Image h={24} src={logoImg} />
     </Flex>
   );
-
+  console.log(quizParams);
   const renderScreenByStep = () => {
     switch (step) {
       case Step.SetQestionQty:
@@ -73,9 +74,16 @@ function App() {
           />
         );
       case Step.SetQuestionDifficulty:
-        return <SetQuestionDifficulty />;
+        return (
+          <SetQuestionDifficulty
+            onClickNext={(difficulty: QuizDifficulty) => {
+              setQuizParams({ ...quizParams, difficulty });
+              setStep(Step.Play);
+            }}
+          />
+        );
       case Step.Play:
-        return <></>;
+        return <Play />;
       case Step.Score:
         return <></>;
       default:
