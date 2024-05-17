@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { QuizItem } from "../types/quiz-type";
+import { QuizItem } from "../../types/quiz-type";
 import {
+  Box,
   Flex,
+  HStack,
   Heading,
   Radio,
   RadioGroup,
@@ -9,8 +11,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Lottie from "lottie-react";
-import validAnime from "../assets/lottie/valid.json";
-import inValidAnime from "../assets/lottie/invalid.json";
+import validAnime from "../../assets/lottie/valid.json";
+import inValidAnime from "../../assets/lottie/invalid.json";
+import Timer from "./Timer";
 
 function Play(p: { quiz: QuizItem[] }) {
   const [currentQuizItemIndex, setCurrentQuizItemIndex] = useState<number>(0);
@@ -19,34 +22,82 @@ function Play(p: { quiz: QuizItem[] }) {
     "valid" | "invalid" | "unaswered"
   >("unaswered");
   const currentQuizItem: QuizItem = p.quiz[currentQuizItemIndex];
-  const avalaibleAnswers: string[] = [
-    currentQuizItem.correct_answer,
-    ...currentQuizItem.incorrect_answers,
-  ];
+  const [avalaibleAnswers, setAvalaibleAnswers] = useState<string[]>([]);
+  const [history, setHistory] = useState<boolean[]>([]);
+  useEffect(() => {
+    setAvalaibleAnswers(
+      [
+        currentQuizItem.correct_answer,
+        ...currentQuizItem.incorrect_answers,
+      ].sort(() => Math.random() - 0.5)
+    );
+  }, [currentQuizItemIndex]);
 
   useEffect(() => {
     if (answer) {
-      if (isValidAnswer(answer)) {
+      const isValid = isValidAnswer(answer);
+      if (isValid) {
         setQuestionStatus("valid");
       } else {
         setQuestionStatus("invalid");
       }
+      setHistory([...history, isValid]);
     }
   }, [answer]);
 
   const isValidAnswer = (answer: string): boolean => {
     return answer === currentQuizItem.correct_answer;
   };
+
+  const renderProgressBar = () => {
+    return (
+      <HStack>
+        {p.quiz.map((quizItem, i) => {
+          return (
+            <Box
+              key={i}
+              h={3}
+              mt={10}
+              w={25}
+              backgroundColor={
+                i >= currentQuizItemIndex
+                  ? "gray.200"
+                  : history[i]
+                  ? "green.300"
+                  : "red.300"
+              }
+            />
+          );
+        })}
+      </HStack>
+    );
+  };
+
   const radioList = avalaibleAnswers.map((avalaibleAnswer: string) => {
     return (
       <Radio key={avalaibleAnswer} value={avalaibleAnswer}>
-        <Text dangerouslySetInnerHTML={{ __html: avalaibleAnswer }} />
+        <Text
+          color={
+            questionStatus === "unaswered"
+              ? "black"
+              : isValidAnswer(avalaibleAnswer)
+              ? "green.500"
+              : "red.500"
+          }
+          dangerouslySetInnerHTML={{ __html: avalaibleAnswer }}
+        />
       </Radio>
     );
   });
   console.log(p.quiz);
   return (
     <Flex direction={"column"} alignItems={"center"} justifyContent={"center"}>
+      {renderProgressBar()}
+      {questionStatus === "unaswered" && (
+        <Box position={"absolute"} right={50} top={50}>
+          <Timer max={10} unFinished={() => ""} />
+        </Box>
+      )}
       <Heading
         maxW={800}
         fontSize={"3xl"}
@@ -54,7 +105,10 @@ function Play(p: { quiz: QuizItem[] }) {
         mb={10}
         dangerouslySetInnerHTML={{ __html: currentQuizItem.question }}
       />
-      <RadioGroup value={answer} onChange={setAnswer}>
+      <RadioGroup
+        value={answer}
+        onChange={questionStatus === "unaswered" ? setAnswer : undefined}
+      >
         <SimpleGrid>{radioList}</SimpleGrid>
       </RadioGroup>
       <Lottie

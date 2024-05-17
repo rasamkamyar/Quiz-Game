@@ -14,7 +14,7 @@ import SetQestionCategory from "./features/SetQestionCategory";
 import { QuizAPI } from "./api/quiz-api";
 import SetQuestionDifficulty from "./features/SetQuestionDifficulty";
 
-import Play from "./features/Play";
+import Play from "./features/playQuiz/Play";
 enum Step {
   SetQestionQty,
   SetQestionCategory,
