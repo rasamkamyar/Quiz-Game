@@ -7,6 +7,7 @@ import {
   FetchQuizParams,
   QuizCategory,
   QuizDifficulty,
+  QuizItem,
   QuizType,
 } from "./types/quiz-type";
 import SetQestionCategory from "./features/SetQestionCategory";
@@ -30,6 +31,8 @@ function App() {
     type: QuizType.Multiple,
   });
   const [categories, setCategories] = useState<QuizCategory[]>([]);
+  const [quiz, setQuiz] = useState<QuizItem[]>([]);
+
   async function fetchingCategories() {
     setCategories([
       { id: -1, name: "Mixed" },
@@ -76,14 +79,24 @@ function App() {
       case Step.SetQuestionDifficulty:
         return (
           <SetQuestionDifficulty
-            onClickNext={(difficulty: QuizDifficulty) => {
-              setQuizParams({ ...quizParams, difficulty });
-              setStep(Step.Play);
+            onClickNext={async (difficulty: QuizDifficulty) => {
+              const params = { ...quizParams, difficulty };
+              setQuizParams(params);
+              const quizRes = await QuizAPI.fetchQuiz(params);
+              if (quizRes.length > 0) {
+                setQuiz(quizRes);
+                setStep(Step.Play);
+              } else {
+                alert(
+                  `Couldent find ${params.amount} qusetion for this category.please restart game`
+                );
+                setStep(Step.SetQestionQty);
+              }
             }}
           />
         );
       case Step.Play:
-        return <Play />;
+        return <Play quiz={quiz} />;
       case Step.Score:
         return <></>;
       default:
