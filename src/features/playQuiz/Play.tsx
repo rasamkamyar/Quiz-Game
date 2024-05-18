@@ -89,13 +89,17 @@ function Play(p: { quiz: QuizItem[] }) {
       </Radio>
     );
   });
-  console.log(p.quiz);
+
+  const failQuestion = () => {
+    setHistory([...history, false]);
+    setQuestionStatus("invalid");
+  };
   return (
     <Flex direction={"column"} alignItems={"center"} justifyContent={"center"}>
       {renderProgressBar()}
       {questionStatus === "unaswered" && (
         <Box position={"absolute"} right={50} top={50}>
-          <Timer max={10} unFinished={() => ""} />
+          <Timer max={10} unFinished={failQuestion} />
         </Box>
       )}
       <Heading
